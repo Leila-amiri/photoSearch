@@ -20,7 +20,7 @@ function FirstLoad() {
   //localStorage.clear();
   getFlickrPhotos(searchLat, searchLon);
   if(localStorage.getItem("favs")=="")
-    localStorage.setItem("favs","");
+    localStorage.setItem("favs",",");
   favContainer.style.display = "block";
   var existing = localStorage.getItem("Options");
   existing = existing ? existing.split(",") : [];
@@ -192,7 +192,7 @@ function openImg(e,state) {
   if(!state){
     ComeFrom=true;
     var strlclFavs = localStorage.getItem("favs");
-    if (strlclFavs.indexOf(thumb.children[0].src) > -1) {
+    if ((strlclFavs) && (strlclFavs.search(thumb.children[0].src) > -1)) {
       favIcon.children[0].classList.remove("fa-heart-o");
       favIcon.children[0].classList.add("fa-heart");
     }
