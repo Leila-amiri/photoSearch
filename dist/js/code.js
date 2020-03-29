@@ -192,7 +192,7 @@ function openImg(e,state) {
   if(!state){
     ComeFrom=true;
     var strlclFavs = localStorage.getItem("favs");
-    if (strlclFavs.search(thumb.children[0].src) > -1) {
+    if ((strlclFavs) && (strlclFavs.search(thumb.children[0].src) > -1)) {
       favIcon.children[0].classList.remove("fa-heart-o");
       favIcon.children[0].classList.add("fa-heart");
     }
