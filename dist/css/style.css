@@ -1,0 +1,307 @@
+
+html {height:100%;}
+* {box-sizing: border-box;}
+
+body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  background-color: #000;
+  font-family: Arial,Verdana,Sans-serif;
+}
+
+.row::after {
+  display: table;
+  content: "";
+  clear: both;
+}
+
+.btn {
+  border-radius: 3px;
+  background-color: green;
+  padding: 10px 15px;
+  outline: none;
+  border: none;
+  color: #fff;
+  transition: 0.4s;
+  cursor: pointer;
+}
+
+.btn:hover {opacity: 0.7;}
+.btn:active {opacity: 1;}
+
+input {
+  border-radius: 5px;
+  padding: 10px;
+  outline: none;
+  border: none;
+  background-color: #ddd;
+  margin: 0 20px 10px 10px;
+  display: inline-block;
+}
+
+label {color: #fff; }
+
+/* Add Zoom Animation to add item modal and thumbnail images*/
+.animate {
+  -webkit-animation: animatezoom 0.6s;
+  animation: animatezoom 0.6s;
+}
+
+@-webkit-keyframes animatezoom {
+  from {-webkit-transform: scale(0);}
+  to {-webkit-transform: scale(1);}
+}
+
+@keyframes animatezoom {
+  from {transform: scale(0);}
+  to {transform: scale(1);}
+}
+
+
+@media only screen and (max-width: 1300px) {
+  
+  #main #modal {
+    height: 80%;
+    width: 50%;
+    top: 12%;
+    left: 25%;
+  }
+
+  #main .modal-content {margin-top: 30px;}
+
+   #main .modal-content input {
+    display: block;
+    width: 80%;
+    margin: 10px auto 20px auto;
+    padding: 15px;
+  }
+
+   #main .modal-content label {
+    display: block;
+    width: 80%;
+    text-align: left;
+    margin-left:70px;
+  }
+
+  #main div#imgContainer {width: 600px;}
+
+  #main #favContainer {width: 600px;}
+}
+
+@media only screen and (max-width: 992px) {
+   #main div#imgContainer {width: 50%;}
+   #main #favContainer {width: 50%;}
+   #main .modal-content label {margin-left: 60px;}
+}
+
+
+@media only screen and (max-width: 768px) {
+  input, #searchBtn {
+    display: block;
+    width: 80%;
+    margin: 10px auto 25px auto;
+  }
+
+  label {
+    display: block;
+    width: 80%;
+    text-align: left;
+    margin-left: 80px;
+  }
+
+  #main div#imgContainer {width: 70%;}
+  #main #favContainer {width: 70%;}
+  #main .modal-content label {margin-left: 40px;}
+  
+  #main .thumb {
+    width: auto;
+    height: 20%;
+    left: 20%;
+    top: 15%;
+  }
+
+}
+
+@media only screen and (max-width: 600px) {
+  #main div#imgContainer {width: 250px; padding-left: 45px;}
+  #main #favContainer {width: 250px; padding-left: 45px;}
+  #main .modal-content label {margin-left: 40px;}
+  #main #modal {
+    height: 80%;
+    width: 80%;
+    top: 8%;
+    left: 10%;
+  }
+
+  #main .modal-content .btn-save { width:80%; }
+
+  #main .thumb {
+    width: auto;
+    height: 20%;
+    left: 6%;
+    top: 15%;
+  }
+
+  #main .thumb .thumbImg {
+    width: 330px;
+  }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------*/
+section#main {
+  margin: auto;
+  text-align: center;
+  height: 100%;
+}
+
+div#srch {margin: 40px 0 20px 0;}
+
+#selectLoc {
+  padding: 6px 12px;
+  margin: 0 10px 40px 0;
+}
+
+/*image container----------------------------------------------------------------------------------------------------------------------------------*/
+div#imgContainer {
+  margin: auto;
+  width: 30%;
+  padding-left: 55px;
+}
+
+div#imgContainer .img {
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 5px;
+  height: 100px;
+  width: 80px;
+  margin: 10px 15px 10px 0;
+  float: left;
+}
+
+/*end of image container--------------------------------------------------------------------------------------------------------------------------*/
+
+.pagination {
+  margin: 10px 0 50px 0;
+}
+p{color: #555; font-size: 18px;  font-weight: bold; margin-bottom: 0;}
+
+/*container of favorite image---------------------------------------------------------------------------------------------------------------------*/
+
+#favContainer {
+  width: 30%;
+  margin: auto;
+  display: none;
+  height: auto;
+  border-top: 2px solid #555;
+  padding-left: 55px;
+}
+
+div#favContainer .img {
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 5px;
+  height: 100px;
+  width: 80px;
+  margin: 10px 15px 10px 0px;
+  float: left;
+}
+
+
+/*end of container of favorite image-------------------------------------------------------------------------------------------------------------*/
+
+
+
+/* add items window------------------------------------------------------------------------------------------------------------------------------*/
+#modal {
+  background-color: #fff;
+  margin: 1% auto 15% auto;
+  border: 1px solid #888;
+  width: 35%;
+  height: 40%;
+  position: absolute;
+  display: none;
+  left: 32%;
+  transition: 0.4s;
+}
+
+/*the close button */
+span.close {
+  position: absolute;
+  right: 20px;
+  top: 5px;
+  color: #000;
+  cursor: pointer;
+  font-size: 36px;
+}
+
+span.close:hover {color: red;}
+.modal-content {margin: 100px auto 0 auto;}
+
+.modal-content input {
+  padding: 5px;
+  border: 1px solid #aaa;
+  width: 30%;
+  background-color: #f4f4f4;
+}
+
+.modal-content label {
+  font-size: 17px;
+  font-weight: bold;
+  display: inline-block;
+  width: 12%;
+  color: #000;
+}
+
+.modal-content .btn-save {
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+  padding: 10px 20px;
+}
+
+
+/*thumbnail image------------------------------------------------------------------------------------------------------------------------------------*/
+.thumb {
+  display: none;
+  width: auto;
+  height: auto;
+  position: absolute;
+  left: 38%;
+  top: 17%;
+  transition: 0.4s;
+  z-index: 5;
+  background-color: #fff;
+  border-radius: 36px 36px 0px 0px;
+  -moz-border-radius: 36px 36px 0px 0px;
+  -webkit-border-radius: 36px 36px 0px 0px;
+}
+
+.thumbImg {
+  margin: 30px auto 0 auto;
+  display: block;
+}
+
+#closeFav {
+  position: absolute;
+  top: 5px;
+  right: 20px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+#closeFav:hover {color: red;}
+
+
+#favIcon {
+  position: absolute;
+  top: 5px;
+  left: 20px;
+  font-size: 20px;
+  cursor: pointer;
+}
+
+.fa-heart {color: red;}
+.fa-heart-o {color: black; font-weight:bold;}
+.fa-heart-o:hover {color: red;}
+
