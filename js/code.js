@@ -208,6 +208,7 @@ function openImg(e,state) {
       favIcon.children[0].classList.add("fa-heart");
       favId=e.target;
   }
+  window.scrollTo({ top: 5  });
   thumb.style.display = "block";
 }
 
