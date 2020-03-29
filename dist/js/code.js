@@ -20,7 +20,7 @@ function FirstLoad() {
   //localStorage.clear();
   getFlickrPhotos(searchLat, searchLon);
   if(localStorage.getItem("favs")=="")
-    localStorage.setItem("favs","");
+    localStorage.setItem("favs",",");
   favContainer.style.display = "block";
   var existing = localStorage.getItem("Options");
   existing = existing ? existing.split(",") : [];
