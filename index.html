@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+    <title>Flicker Search</title>
+    <link rel="stylesheet" href="css/style.css" />
+    <script src="https://kit.fontawesome.com/0b7359682c.js" crossorigin="anonymous"></script>
+  </head>
+
+  <body>
+    
+    <section id="main" class="animate-bottom">
+      <!--search for geo location-->
+      <div id="srch">
+        <label for="lat">Latitude:</label>
+        <input id="lat" value="33.8568" placeholder="33.8568" />
+        <label for="lon">Longitude:</label>
+        <input id="lon" value="151.2153" placeholder="151.2153" />
+        <button type="button" id="searchBtn" class="btn">Search</button>
+      </div>
+        
+        <!--predefined selection list-->
+        <select name="predefinedList" id="selectLoc">
+          <option value="Sydney,33.8688,151.2093">Sydney</option>
+          <option value="Rome,41.9028,12.4964">Rome</option>
+          <option value="Paris,48.8566,2.3522">Paris</option>
+          <option value="Moscow,55.7558,37.6173">Moscow</option>
+        </select>
+        <button type="button" id="addBtn" class="btn">Add to List</button>
+      
+       <!--modal window for adding new items-->
+      <div id="modal" class="animate">
+        <span class="close">&times;</span>
+        <div class="modal-content">
+          <form action="#" id="addForm">
+            <label for="loc">Location:</label>
+            <input id="loc" type="text" placeholder="Location" required="required" />
+            <br />
+            <label for="lat1">Latitude:</label>
+            <input id="lat1" type="number" step="any" placeholder="Latitude" required="required" />
+            <br />
+            <label for="lon1">Longitude:</label>
+            <input id="lon1" type="number" step="any" placeholder="Longitude" required="required" /><br />
+            <button type="button" id="saveBtn" class="btn btn-save">Save</button>
+          </form>
+        </div>
+      </div>
+
+       <!--container of searched image-->
+      <div class="row"><div id="imgContainer"></div></div>
+
+      <div class="pagination">
+        <button id="behind" class="btn">Prev</button>
+        <button id="forward" class="btn">Next</button>
+      </div>
+
+      <p> My favorite List</p>
+    
+    <!-- thumbnail showing of image-->
+    <div class="thumb animate">
+      <img src="" class="thumbImg" />
+      <span id="favIcon"><i class="fa fa-heart-o" id="icon"></i></span>
+      <span id="closeFav">close</span>
+    </div>
+
+
+    <!--container of favorite image-->
+    <div class="row"><div id="favContainer"></div></div>
+
+      </section>
+
+    <script src="js/code.js"></script>
+  </body>
+</html>
