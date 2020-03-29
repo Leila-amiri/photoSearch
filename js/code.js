@@ -3,20 +3,130 @@ var up = 10;
 var down = 0;
 var total = 0;
 var favId;
-var ComeFrom=false;
+let ComeFrom=false;
 const lat = document.querySelector("#lat");
 const lon = document.querySelector("#lon");
-const searchLat = document.querySelector("#lat").value;
-const searchLon = document.querySelector("#lon").value;
+const next = document.querySelector("#forward");
+const prev = document.querySelector("#behind");
 const thumb = document.querySelector(".thumb");
 const favContainer = document.querySelector("#favContainer");
 const selectedLoc = document.querySelector("#selectLoc");
-const next = document.querySelector("#forward");
-const prev = document.querySelector("#behind");
+let searchLat = document.querySelector("#lat").value;
+let searchLon = document.querySelector("#lon").value;
+var favIcon = document.querySelector("#favIcon");
 
 
-window.onload = FirstLoad;
-function FirstLoad() {
+document.querySelector("#searchBtn").onclick = handleSearch;
+document.querySelector("#saveBtn").onclick = handleSave;
+
+favIcon.onclick = handleFavImage;
+selectedLoc.onchange = handleLocChange;
+next.onclick = handleNext;
+prev.onclick = handlePrev;
+window.onload = handleFirstLoad;
+
+
+//handlers of buttons------------------------------------------------------------------------------------------------------------------------------------------------
+document.querySelector("#addBtn").addEventListener("click", function() {
+  document.querySelector("#modal").style.display = "block";
+}, false); 
+  
+
+document.querySelector(".close").addEventListener("click", function() {
+    document.querySelector("#modal").style.display = "none";
+  },false);
+
+document.querySelector("#closeFav").addEventListener("click", function() {
+  thumb.children[0].src="";
+  thumb.style.display = "none";
+  favIcon.children[0].classList.add("fa-heart-o");
+}, false); 
+
+
+function handleLocChange() {
+  var selectedLocArr = selectedLoc.value.split(",");
+  lat.value = selectedLocArr[1];
+  lon.value = selectedLocArr[2];
+  up=10;
+  down=0;
+  handleSearch();
+}
+
+function handleSearch() {
+  searchLat = lat.value;
+  searchLon = lon.value;
+  getFlickrPhotos(searchLat, searchLon);
+}
+
+function handleNext() {
+  if (up > total) {
+    next.disabled = true;
+    next.style.backgroundColor = "#555";
+    next.style.opacity = "1";
+  } else {
+    prev.disabled = false;
+    prev.style.backgroundColor = "green";
+    up += 10;
+    down += 10;
+    appendImg();
+  }
+}
+
+function handlePrev() {
+  if (down <= 0) {
+    prev.disabled = true;
+    prev.style.backgroundColor = "#555";
+    prev.style.opacity = "1";
+  } else {
+    next.disabled = false;
+    next.style.backgroundColor = "green";
+    up -= 10;
+    down -= 10;
+    appendImg();
+  }
+}
+
+function handleSave() {
+  var loc = document.querySelector("#loc");
+  var lat1 = document.querySelector("#lat1");
+  var lon1 =  document.querySelector("#lon1");
+  if((loc.value) && (lat1.value) && (lon1.value)) {
+    var newOp = document.createElement("option");
+    selectedLoc.appendChild(newOp);
+    newOp.text = loc.value;
+    newOp.value = loc.value + "," + lat1.value + "," + lon1.value;
+    addToLocalStorageArray("Options", newOp.value);
+    loc.value = "";
+    lat1.value = "";
+    lon1.value = "";
+  }
+}
+
+function handleFavImage() {
+  if (favIcon.children[0].classList.contains("fa-heart-o")) {
+    favIcon.children[0].classList.remove("fa-heart-o");
+    favIcon.children[0].classList.add("fa-heart");
+    addImgToFav(thumb.children[0]);
+  } else 
+      if(ComeFrom==false){
+        removeFromFav();
+        favIcon.children[0].classList.remove("fa-heart");
+        favIcon.children[0].classList.add("fa-heart-o");
+      } else {
+        var src=thumb.children[0].src.replace(".jpg", "_t.jpg");;
+        for(var i=0;i<favContainer.children.length;i++)
+          if(favContainer.children[i].src===src) {
+            favId=favContainer.children[i];
+            removeFromFav();
+            favIcon.children[0].classList.remove("fa-heart");
+            favIcon.children[0].classList.add("fa-heart-o");
+          }
+    }
+}
+//end of handlers of button-------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+function handleFirstLoad() {
   //localStorage.clear();
   getFlickrPhotos(searchLat, searchLon);
   if(localStorage.getItem("favs")=="")
@@ -46,60 +156,67 @@ function FirstLoad() {
   }
 }
 
-
-selectedLoc.onchange = handleSelection;
-function handleSelection() {
-  var selectedLocArr = selectedLoc.value.split(",");
-  lat.value = selectedLocArr[1];
-  lon.value = selectedLocArr[2];
-  up=10;
-  down=0;
-  searchPhoto();
-}
-
-document.querySelector("#searchBtn").onclick = searchPhoto;
-function searchPhoto() {
-  var searchLat = lat.value;
-  var searchLon = lon.value;
-  getFlickrPhotos(searchLat, searchLon);
-}
-
-function getFlickrPhotos(searchLat, searchLon) {
+// fetch data from flicker API
+function getFlickrPhotos( searchLat, searchLon) {
   var FLICKR_API_KEY = "a64506982a8d49ab6fec2cdf533ca2c8";
-  var url = "https://www.flickr.com/services/rest/?method=flickr.photos.search&api_key=";
-  var qryString = url + FLICKR_API_KEY + "&has_geo=true" + "&lat=" + searchLat + "&lon=" + searchLon + "&format=json&nojsoncallback=1";
+  var searchUrl ="https://www.flickr.com/services/rest/?method=flickr.photos.search&";
 
-  var xmlhttp = new XMLHttpRequest();
-  xmlhttp.onreadystatechange = function() {
-    if (this.readyState == 4 && this.status == 200) {
-      var apiResult = JSON.parse(this.responseText);
-      myFunction(apiResult);
-    }
+  var searchReqParams = {
+    api_key: FLICKR_API_KEY,
+    has_geo: true,
+    lat: searchLat,
+    lon: searchLon,
+    accuracy: 11,
+    format: "json",
+    safe_search: 1,
+    privacy_filter: 1,
+    per_page: 200
   };
 
-    xmlhttp.open("GET", qryString);
-    xmlhttp.send();
+  $.ajax({
+    type: "GET",
+    url: searchUrl,
+    dataType: "jsonp",
+    cache: true,
+    crossDomain: true,
+    jsonp: false,
+    jsonpCallback: "jsonFlickrApi",
+    data: searchReqParams,
+    success: function(data) {
+      if (data.photos.total > 0) {
+        apiResult(data.photos);
+       console.log('more than 10')
+      } else {
+        console.log(data.photos);
+      }
+    }
+  }).fail(function(jqXHR, textStatus, errorThrown) {
+    console.log("req failed");
+    console.log("textStatus: ", textStatus, " code: ", jqXHR.status);
+  });
 
-function myFunction(apiResult) {
-  total = apiResult.photos.total;
+
+//handle the response of ajax call
+function apiResult(photos) {
+  total = photos.photo.length;
   for (var i = 0; i < total && i < 200; i++) {
-    var farmId = apiResult.photos.photo[i].farm;
-    var serverId = apiResult.photos.photo[i].server;
-    var id = apiResult.photos.photo[i].id;
-    var secret = apiResult.photos.photo[i].secret;
+    var farmId = photos.photo[i].farm;
+    var serverId =photos.photo[i].server;
+    var id = photos.photo[i].id;
+    var secret = photos.photo[i].secret;
     var imgSrc = "https://farm" + farmId + ".staticflickr.com/" + serverId +  "/" + id + "_" + secret + "_t.jpg";
     allImg[i] = imgSrc;
   }
-
     prev.disabled = false;
     prev.style.backgroundColor = "green";
     next.disabled = false;
     next.style.backgroundColor = "green";
-    show();
+    appendImg();
   }
 }
 
-function show() {
+//append the result(images) of ajax call to the dom 
+function appendImg() {
   var imgContainer = document.querySelector("#imgContainer");
   while (imgContainer.firstChild) {
     imgContainer.removeChild(imgContainer.firstChild);
@@ -116,78 +233,8 @@ function show() {
   }
 }
 
-next.onclick = forward;
-function forward() {
-  if (up > total) {
-    next.disabled = true;
-    next.style.backgroundColor = "#555";
-    next.style.opacity = "1";
-  } else {
-    prev.disabled = false;
-    prev.style.backgroundColor = "green";
-    up += 10;
-    down += 10;
-    show();
-  }
-}
-
-prev.onclick = behind;
-function behind() {
-  if (down <= 0) {
-    prev.disabled = true;
-    prev.style.backgroundColor = "#555";
-    prev.style.opacity = "1";
-  } else {
-    next.disabled = false;
-    next.style.backgroundColor = "green";
-    up -= 10;
-    down -= 10;
-    show();
-  }
-}
-
-
-document.querySelector("#addBtn").addEventListener("click", function() {
-  document.querySelector("#modal").style.display = "block";
-}, false); 
-  
-
-document.querySelector("#saveBtn").onclick = saveBtn;
-function saveBtn() {
-  var loc = document.querySelector("#loc");
-  var lat1 = document.querySelector("#lat1");
-  var lon1 =  document.querySelector("#lon1");
-  if((loc.value) && (lat1.value) && (lon1.value)) {
-    var newOp = document.createElement("option");
-    selectedLoc.appendChild(newOp);
-    newOp.text = loc.value;
-    newOp.value = loc.value + "," + lat1.value + "," + lon1.value;
-    addToLocalStorageArray("Options", newOp.value);
-    loc.value = "";
-    lat1.value = "";
-    lon1.value = "";
-  }
-}
-
-const addToLocalStorageArray = (name, value) => {
-  var existing = localStorage.getItem(name);
-  existing = existing ? existing.split(",") : [];
-  existing.push(value);
-  localStorage.setItem(name, existing.toString());
-};
-
-document.querySelector(".close").addEventListener("click", function() {
-    document.querySelector("#modal").style.display = "none";
-  },false);
-
-document.querySelector("#closeFav").addEventListener("click", function() {
-  thumb.children[0].src="";
-  thumb.style.display = "none";
-  favIcon.children[0].classList.add("fa-heart-o");
-}, false); 
 
 function openImg(e,state) {
-  var thumb = document.querySelector(".thumb");
   thumb.children[0].src = e.target.src.replace("_t", "");
   if(!state){
     ComeFrom=true;
@@ -212,32 +259,6 @@ function openImg(e,state) {
   thumb.style.display = "block";
 }
 
-var favIcon = document.querySelector("#favIcon");
-favIcon.onclick = favImage;
-
-function favImage() {
-  if (favIcon.children[0].classList.contains("fa-heart-o")) {
-    favIcon.children[0].classList.remove("fa-heart-o");
-    favIcon.children[0].classList.add("fa-heart");
-    addImgToFav(thumb.children[0]);
-  } else 
-    if(ComeFrom==false){
-       removeFromFav();
-       favIcon.children[0].classList.remove("fa-heart");
-       favIcon.children[0].classList.add("fa-heart-o");
-    }
-    else
-    {
-        var src=thumb.children[0].src.replace(".jpg", "_t.jpg");;
-        for(var i=0;i<favContainer.children.length;i++)
-          if(favContainer.children[i].src===src){
-            favId=favContainer.children[i];
-            removeFromFav();
-            favIcon.children[0].classList.remove("fa-heart");
-            favIcon.children[0].classList.add("fa-heart-o");
-          }
-  }
-}
 
 function addImgToFav(image) {
   var strlclFavs = localStorage.getItem("favs");
@@ -254,8 +275,7 @@ function addImgToFav(image) {
   }
 }
 
-function removeFromFav()
-{
+function removeFromFav() {
     var strlclFavs = localStorage.getItem("favs");
     var strTemp = favId.src.replace("_t", "");
     if (strlclFavs.indexOf(strTemp) > -1) {
@@ -263,4 +283,21 @@ function removeFromFav()
       favId.remove();
     }
 }
+
+function addToLocalStorageArray(name, value)  {
+  var existing = localStorage.getItem(name);
+  existing = existing ? existing.split(",") : [];
+  existing.push(value);
+  localStorage.setItem(name, existing.toString());
+};
+
+
+
+
+
+
+
+
+
+
 
